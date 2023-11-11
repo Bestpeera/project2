@@ -1,0 +1,15 @@
+Django==4.0.7
+
+# Rest apis
+djangorestframework==3.13.1
+djangorestframework-simplejwt==5.2.0
+pyjwt==2.4.0
+drf-yasg==1.21.3
+drf-yasg-examples==0.1.1
+django-filter==22.1
+django-cors-headers==3.13.0
+django-imagekit==4.1.0
+
+roboflow==1.1.9
+opencv-python==4.8.1.78
+matplotlib==3.8.1

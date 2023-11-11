@@ -1,0 +1,112 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #3AC862;
+}
+
+.tweet {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-info h2 {
+    font-size: 16px;
+    color: #333;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.4;
+    margin: 10px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #3AC862;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#tweet-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#post-button {
+    background-color: #3AC862;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#post-button:hover {
+    background-color: #31ae55;
+}
+
+.like-button {
+    background: none;
+    border: none;
+    color: #bcbaba;
+    font-size: 24px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.like-count {
+    margin-left: 10px;
+    color: #999;
+    font-size: 16px;
+}
+
+.like-button.liked {
+    color: #E0245E; /* Highlighted color when liked */
+}
