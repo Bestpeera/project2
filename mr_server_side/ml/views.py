@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from mr_server_side.settings import STATICFILES_DIRS, STATIC_ROOT
 
-from ml.models import show_image, write_image
+from ml.models import image_to_base64, show_image, write_image
 
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
@@ -19,9 +19,6 @@ def compare_image(request):
     image_path= r"C:\Users\James\Desktop\project2\project2\static\images\example.jpg"
     project = rf.workspace().project("thesis-mep-testing")
     model = project.version(3).model
-
-    # # infer on a local image
-    # print(model.predict("your_image.jpg").json())
 
     # infer on an image hosted elsewhere
     predictions = model.predict(image_path).json()
@@ -53,9 +50,10 @@ def compare_image(request):
     image_copy = image.copy()  # Make a copy to draw on
     image_copy = cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0)
 
-    err = write_image(image_copy, "overlay")
+    output_path, err = write_image(image_copy, "overlay")
     if err:
         return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+    overlay_base64, err = image_to_base64(output_path)
 
     height, width, channels = image.shape
     blank_image = np.zeros((height, width, 3), dtype=np.uint8)
@@ -65,8 +63,11 @@ def compare_image(request):
     cv2.fillPoly(blank_image, [polygon_points], white_fill_color)
 
     # Display the image with the filled polygon
-    err = write_image(blank_image, "bw")
+    output_path, err = write_image(blank_image, "bw")
     if err:
         return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+    blank_base64, err = image_to_base64(output_path)
+    
+    response = {"overlay_base64":overlay_base64, "blank_base64":blank_base64}
 
-    return Response({"success": True}, status=status.HTTP_200_OK)
+    return Response(response, status=status.HTTP_200_OK)
