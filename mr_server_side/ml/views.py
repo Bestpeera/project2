@@ -2,7 +2,8 @@ from django.shortcuts import render
 
 from mr_server_side.settings import STATICFILES_DIRS, STATIC_ROOT
 
-from ml.models import image_to_base64, show_image, write_image
+from ml.models import calculate_simirality_of_two_image ,image_to_base64, save_image_from_base64, show_image, write_image
+from ml.serializers import CompareImageSerializer
 
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
@@ -13,10 +14,22 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-@api_view(["GET"])
+@api_view(["POST"])
 def compare_image(request):
+    
+    serializer = CompareImageSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response({"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+    unity_image_base64 = serializer.validated_data.get("unity_image_base64")
+    hololens_image_base64 = serializer.validated_data.get("hololens_image_base64")
+
+    err = save_image_from_base64(hololens_image_base64, "hololens_image")
+    err = save_image_from_base64(unity_image_base64, "unity_image")
+    if err:
+        return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
+    
     rf = Roboflow(api_key="FDHkG7bpmLQsiZlma4nV")
-    image_path= r"C:\Users\James\Desktop\project2\project2\static\images\example.jpg"
+    image_path= r"C:\Users\James\Desktop\project2\project2\static\images\hololens_image.png"
     project = rf.workspace().project("thesis-mep-testing")
     model = project.version(3).model
 
@@ -62,12 +75,19 @@ def compare_image(request):
     white_fill_color = (255,255,255)
     cv2.fillPoly(blank_image, [polygon_points], white_fill_color)
 
+    unity_image_path = r"C:\Users\James\Desktop\project2\project2\static\images\unity_image.png"
+    unity_image = cv2.imread(unity_image_path)
+    similarity_percentage = calculate_simirality_of_two_image(blank_image, unity_image)
+
     # Display the image with the filled polygon
     output_path, err = write_image(blank_image, "bw")
     if err:
         return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
     blank_base64, err = image_to_base64(output_path)
-    
-    response = {"overlay_base64":overlay_base64, "blank_base64":blank_base64}
+
+    response = {"overlay_base64":overlay_base64,
+                "blank_base64":blank_base64,
+                "similarity_percentage":similarity_percentage,
+                }
 
     return Response(response, status=status.HTTP_200_OK)

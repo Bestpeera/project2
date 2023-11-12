@@ -1,4 +1,6 @@
 from django.db import models
+from io import BytesIO
+from PIL import Image
 
 import base64
 import cv2
@@ -35,3 +37,32 @@ def image_to_base64(file_path):
             return base64_string, None
     except Exception as e:
         return str(e), None
+
+def save_image_from_base64(base64_str, file_name):
+    try:
+        base64_decoded = base64.b64decode(base64_str)
+
+        # Create a BytesIO object to work with PIL
+        image_buffer = BytesIO(base64_decoded)
+
+        # Open the image using Pillow
+        image = Image.open(image_buffer)
+
+        # Save the image to the specified output file path
+        output_file_path = r"C:\Users\James\Desktop\project2\project2\static\images\{}.png".format(file_name)
+        image.save(output_file_path)
+
+    except Exception as e:
+        return str(e)
+
+def calculate_simirality_of_two_image(blank_image, unity_image):
+
+    similar_point = 0
+    height, width, _ = blank_image.shape
+    for x in range(width):
+        for y in range(height):
+            # Get the color of the pixel at (x, y)
+            if (unity_image[y, x] & blank_image[y, x]).all():
+                similar_point += 1
+    
+    return similar_point/(height*width)*100
