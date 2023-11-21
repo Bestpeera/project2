@@ -5,7 +5,7 @@ from PIL import Image
 import base64
 import cv2
 import matplotlib.pyplot as plt
-
+import numpy as np
 # Create your models here.
 def show_image(image):
     try:
@@ -62,7 +62,6 @@ def calculate_simirality_of_two_image(blank_image, unity_image):
     for x in range(width):
         for y in range(height):
             # Get the color of the pixel at (x, y)
-            if (unity_image[y, x] & blank_image[y, x]).all():
+            if np.array_equal(unity_image[y, x], blank_image[y, x]):
                 similar_point += 1
-    
     return similar_point/(height*width)*100
